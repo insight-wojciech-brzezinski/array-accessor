@@ -12,7 +12,7 @@ interface ArrayAccessorConverter
     /**
      * @return T
      */
-    public function convert(ArrayAccessor $accessor): object;
+    public function convert(ArrayAccessor $accessor, int|string $key): ?object;
 
     public function type(): string;
 }

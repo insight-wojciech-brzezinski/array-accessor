@@ -75,22 +75,22 @@ final class ArrayAccessor
         return $value;
     }
 
-    /**
-     * @template T of object
-     *
-     * @param class-string<T> $into
-     *
-     * @return T
-     */
-    public function convert(string $into): object
-    {
-        /**
-         * @var ArrayAccessorConverter<T> $converter
-         */
-        $converter = self::$converters[$into] ?? throw new InvalidArgumentException();
-
-        return $converter->convert($this);
-    }
+//    /**
+//     * @template T of object
+//     *
+//     * @param class-string<T> $into
+//     *
+//     * @return T
+//     */
+//    public function convert(string $into): object
+//    {
+//        /**
+//         * @var ArrayAccessorConverter<T> $converter
+//         */
+//        $converter = self::$converters[$into] ?? throw new InvalidArgumentException();
+//
+//        return $converter->convert($this);
+//    }
 
     /**
      * @template T of BackedEnum
@@ -199,7 +199,14 @@ final class ArrayAccessor
      */
     public function object(int|string $key, string $type)
     {
-        return $this->move($key)->convert($type);
+        $object = $this->objectOrNull($key, $type);
+
+        if (null === $object) {
+            throw $this->error('', $key);
+        }
+
+        return $object;
+//        return $this->move($key)->convert($type);
     }
 
     /**
@@ -211,7 +218,13 @@ final class ArrayAccessor
      */
     public function objectOrNull(int|string $key, string $type): ?object
     {
-        return $this->moveOrNull($key)?->convert($type);
+        /**
+         * @var ArrayAccessorConverter<T> $converter
+         */
+        $converter = self::$converters[$type] ?? throw new InvalidArgumentException();
+
+        return $converter->convert($this, $key);
+//        return $this->moveOrNull($key)?->convert($type);
     }
 
     public function mixed(int|string $key): mixed
